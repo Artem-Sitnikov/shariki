@@ -12,11 +12,5 @@ function Desktop (size){
     g.drawRoundedRect(0, 0, size, size, 10);
     g.endFill();
     this.addChild(g);
-
 }
-
 Desktop.prototype = Object.create(PIXI.Sprite.prototype);
-
-
-
-
