@@ -13,7 +13,6 @@ window.addEventListener("load", function () {
 function Game() {
     this.app = new PIXI.Application(width, height, {backgroundColor: 0xC0C0C0});
     document.body.appendChild(this.app.view);
-
 }
 
 Game.prototype.tick = function () {
@@ -26,5 +25,4 @@ Game.prototype.tick = function () {
 Game.prototype.run = function () {
     this.f =this.app.stage.addChild(new Field(/*{width: width, height:height}*/));
     game.app.ticker.add(game.tick);
-
 };
