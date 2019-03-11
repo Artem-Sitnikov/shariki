@@ -36,10 +36,6 @@ function Field() {
 Field.prototype = Object.create(PIXI.Sprite.prototype);
 
 Field.prototype.addChildren = function () {
-
-    // for (i=0; i<this.balls.length; i++){
-    //     this.addChild(this.balls[i]);
-    // }
     this.balls = [];
     this.newBall(3);
     this.drawMapDesktop(this.scope);
@@ -52,16 +48,11 @@ Field.prototype.addChildren = function () {
 
     this.reset = this.addChild(new Reset("reset", 'img/reset.png', 2 * this.blockSize, 2 * this.blockSize));
     this.reset.position.set( 2 * this.blockSize, 2 * this.blockSize);
-
-
     this.children.sort(function (a, b) {
         return a.zIndex - b.zIndex
     });
 
     this.reset.on('pointerdown', this.restart, this);
-    // console.log("OK");
-
-    // cont.addChild(reset1);
 };
 
 Field.prototype.drawMapDesktop = function (num){
@@ -72,7 +63,6 @@ Field.prototype.drawMapDesktop = function (num){
             this.mapDesktop[i][u].position.set(200 + (u * this.blockSize), 200 + (i * this.blockSize));
             this.mapDesktop[i][u].xMap = u;
             this.mapDesktop[i][u].yMap = i;
-
             this.mapDesktop[i][u].on('pointerdown', this.moveBallOnDes, this);
         }
     }
@@ -91,15 +81,9 @@ Field.prototype.drawMapBalls = function () {
         var y = this.balls[u].yMap;
         this.mapBalls[y][x] = this.removeChild(this.balls[u]);
         this.mapBalls[y][x] = this.addChild(this.balls[u]);
-        // if (this.lockLis < this.balls.length){
-            // this.mapBalls[y][x].events = ;
-            // this.mapBalls[y][x].removeAllListeners();
             this.mapBalls[y][x].off("pointerdown", this.moveBall, this);
             this.mapBalls[y][x].on("pointerdown", this.moveBall, this);
-            // this.lockLis++;
-        // }
     }
-    // console.log(this.mapBalls);
 };
 
 Field.prototype.restart = function () {
@@ -141,20 +125,15 @@ Field.prototype.drawMapPF = function (){
             }
         }
     }
-    // console.log(this.mapPF);
 };
 
 Field.prototype.moveBall = function (e){
-    // debugger
     if (this.lockBall){
         console.log(e.target.xMap, e.target.yMap);
         this.ballHeight.height*=2;
         this.ballHeight = e.target;
-        // console.log(this.ballHeight);
         e.target.height/=2;
         this.drawMapPF();
-
-
         this.lockBallOnDes = true;
         this.startPFx = e.target.xMap;
         this.startPFy = e.target.yMap;
@@ -169,12 +148,10 @@ Field.prototype.moveBallOnDes = function (e) {
         this.finPFx = e.target.xMap;
         this.finPFy = e.target.yMap;
         this.lockDes = true;
-        this.lock = true; // <--!!!!!!
+        this.lock = true;
         this.hod = false;
         this.updateMovement();
-
     }
-
 };
 
 Field.prototype.updateMovement = function (){
@@ -193,9 +170,7 @@ Field.prototype.movePF = function (ballHeight){
     var grid = new PF.Grid(this.mapPF);
     var finder = new PF.AStarFinder();
     var useGrid = grid.clone();
-
     this.whatBall();
-    // console.log(this.startPFx, this.startPFy, this.finPFx, this.finPFy);
 
     var path = finder.findPath(this.startPFx, this.startPFy, this.finPFx, this.finPFy, useGrid);
     if (path.length >= 2) {
@@ -210,45 +185,30 @@ Field.prototype.movePF = function (ballHeight){
             this.balls[this.jumpBall].position.set(this.balls[this.jumpBall].x + this.blockSize, this.balls[this.jumpBall].y);
             this.startPFx++;
             this.drawMapBalls();
-
         }
         if (this.startPFy > path[1][1]){
             this.balls[this.jumpBall].yMap--;
             this.balls[this.jumpBall].position.set(this.balls[this.jumpBall].x, this.balls[this.jumpBall].y - this.blockSize);
             this.startPFy--;
             this.drawMapBalls();
-
         }
         if (this.startPFy < path[1][1]){
             this.balls[this.jumpBall].yMap++;
             this.balls[this.jumpBall].position.set(this.balls[this.jumpBall].x, this.balls[this.jumpBall].y + this.blockSize);
             this.startPFy++;
             this.drawMapBalls();
-
         }
         this.hod = true;
     } else if (this.hod){
-        // prov
         this.region = [];
         this.ballsFive = [];
         this.searchRegion(this.finPFy, this.finPFx);
-        // console.log(this.region);
-        // console.log(this.mapBalls);
-        // debugger;
         var find = this.searchFive();
-        // console.log(this.ballsFive);
-
-        // debugger
         this.deleteBalls();
-        // console.log(this.balls);
-
-        // debugger
         if (!find) {
-            // console.log("OK");
             this.newBall(3);
         }
         this.drawMapBalls();
-
         this.lockDes = false;
     } else {
         this.lockDes = false;
@@ -294,10 +254,8 @@ Field.prototype.searchRegion = function (y, x) {
         if (this.region[z].yMap === y && this.region[z].xMap === x) return;
     }
     this.region.push(this.mapBalls[y][x]);
-    // debugger
-    // if (this.mapBalls[y][x].color === 0) return;
     if ((y - 1) >= 0 && this.mapBalls[y - 1][x] != null) {
-        if (/*(this.mapBalls[y - 1][x] != null) && */this.mapBalls[y - 1][x].color === this.mapBalls[y][x].color /*|| this.mapBalls[y - 1][x].color === 0*/) {
+        if (this.mapBalls[y - 1][x].color === this.mapBalls[y][x].color ) {
             this.searchRegion(y - 1, x);
         }
     }
@@ -371,7 +329,6 @@ Field.prototype.searchFive = function (){
             if ((x - 2) >= 0 && (x + 2) < this.scope){
                 if ((this.mapBalls[y][x - 2] !== 0) && this.mapBalls[y][x - 1] !== 0 && this.mapBalls[y][x + 1] !== 0 && this.mapBalls[y][x + 2] !== 0 ) {
                     if (this.mapBalls[y][x - 2].color === color && this.mapBalls[y][x - 1].color === color && this.mapBalls[y][x + 1].color === color && this.mapBalls[y][x + 2].color === color ) {
-                        // debugger
                         this.addToBallsFive(this.mapBalls[y][x]);
                         this.addToBallsFive(this.mapBalls[y][x - 2]);
                         this.addToBallsFive(this.mapBalls[y][x - 1]);
@@ -474,17 +431,3 @@ Field.prototype.youLoser = function () {
         this.addChild (this.lose);
     }
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
